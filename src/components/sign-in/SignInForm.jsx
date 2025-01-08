@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import MuzusiLogo from "../../assets/MuzusiLogo.png";
+import { kakaoLoginUrl, naverLoginUrl } from "../../config/Url";
 
 const SignInForm = () => {
   return (
@@ -14,7 +15,7 @@ const SignInForm = () => {
       </SignInFormLogo>
       <SignInText>무자본으로 시작하는 주식 시뮬레이션</SignInText>
       <LoginBtns>
-        <KaKaoLoginBtn>
+        <KaKaoLoginBtn href={kakaoLoginUrl}>
           <Logo>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -31,7 +32,7 @@ const SignInForm = () => {
           </Logo>
           <KakaoLoginText>카카오 로그인</KakaoLoginText>
         </KaKaoLoginBtn>
-        <NaverLoginBtn>
+        <NaverLoginBtn href={naverLoginUrl}>
           <Logo>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -106,6 +107,7 @@ const LoginBtn = styled.a`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-decoration: none;
   cursor: pointer;
 `;
 
