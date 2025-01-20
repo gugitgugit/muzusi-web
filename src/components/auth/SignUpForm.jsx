@@ -1,14 +1,13 @@
 import styled from "styled-components";
-import MuzusiLogo from "@/assets/logo/MuzusiLogo.png";
 import { useState } from "react";
-import signUp from "@/api/auth/signUp";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/useAuth";
+import MuzusiLogo from "@/assets/logo/MuzusiLogo.png";
+import signUp from "@/api/auth/signUp";
+import useAuth from "@/contexts/useAuth";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-
   const [nickname, setNickname] = useState("");
   const [available, setAvailable] = useState(
     "2~8자의 한글, 영문, 숫자(공백, 특수문자 제외)"
@@ -18,7 +17,6 @@ const SignUpForm = () => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setNickname(value);
-
     const regex = /^[a-zA-Z0-9ㄱ-ㅎ|ㅏ-ㅣ|가-힣]{2,8}$/;
     if (regex.test(value)) {
       setAvailable("사용 가능한 닉네임입니다.");
@@ -38,7 +36,6 @@ const SignUpForm = () => {
       try {
         const response = await signUp(nickname);
         if (response.code === 200) {
-          console.log("닉네임 등록 성공", response);
           login({ token: response.data.accessToken });
           alert("닉네임 등록이 완료되었습니다.");
           navigate("/");
@@ -70,7 +67,6 @@ const SignUpForm = () => {
         />
       </SignUpFormLogo>
       <SignUpText>무자본으로 시작하는 주식 시뮬레이션</SignUpText>
-
       <NicknameForm onSubmit={handleSubmit}>
         <NicknameText>닉네임</NicknameText>
         <NicknameInput

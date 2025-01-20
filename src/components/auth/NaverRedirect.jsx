@@ -1,28 +1,25 @@
 import { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/useAuth";
+import useAuth from "@/contexts/useAuth";
 import socialSignIn from "@/api/auth/socialSignIn";
 
-const KakaoRedirect = () => {
+const NaverRedirect = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const fetchKakaoAccessToken = useCallback(
+  const fetchNaverAccessToken = useCallback(
     async (code) => {
       try {
-        const response = await socialSignIn("KAKAO", code);
-        console.log("카카오 로그인 성공", response);
-
+        const response = await socialSignIn("NAVER", code);
         login({ token: response.data.accessToken });
-
         if (response.data.isRegistered) {
           navigate("/");
         } else {
           navigate("/signup");
         }
       } catch (error) {
-        console.error("카카오 로그인 중 오류 발생:", error.message);
+        console.error("네이버 로그인 중 오류 발생:", error.message);
       }
     },
     [navigate, login]
@@ -31,11 +28,10 @@ const KakaoRedirect = () => {
   useEffect(() => {
     const queryPrams = new URLSearchParams(location.search);
     const code = queryPrams.get("code");
-
     if (code) {
-      fetchKakaoAccessToken(code);
+      fetchNaverAccessToken(code);
     }
-  }, [location, fetchKakaoAccessToken]);
+  }, [location, fetchNaverAccessToken]);
 };
 
-export default KakaoRedirect;
+export default NaverRedirect;

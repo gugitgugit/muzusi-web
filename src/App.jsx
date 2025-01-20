@@ -1,3 +1,4 @@
+import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Layout from "@/components/layouts/Layout";
 import SignIn from "@/pages/SignIn";
@@ -6,12 +7,11 @@ import Home from "@/pages/Home";
 import Asset from "@/pages/Asset";
 import Transactions from "@/pages/Transactions";
 import GlobalStyles from "@/GlobalStyles";
-import KakaoRedirect from "@/components/sign-in/KakaoRedirect";
-import NaverRedirect from "@/components/sign-in/NaverRedirect";
+import KakaoRedirect from "@/components/auth/KakaoRedirect";
+import NaverRedirect from "@/components/auth/NaverRedirect";
 import SignUp from "@/pages/SignUp";
-import React from "react";
-import { useAuth } from "@/contexts/useAuth";
-import { setUpInterceptors } from "./api/authApi";
+import useAuth from "@/contexts/useAuth";
+import { setUpInterceptors } from "@/api/authApi";
 
 const App = () => {
   const { logout } = useAuth();

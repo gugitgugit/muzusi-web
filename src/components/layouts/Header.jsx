@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import MuzusiLogo from "@/assets/logo/MuzusiLogo.png";
 import SearchIcon from "@/assets/icon/SearchIcon.svg?react";
-import { useAuth } from "@/contexts/useAuth";
 import signOut from "@/api/auth/signOut";
+import useAuth from "@/contexts/useAuth";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -11,7 +11,6 @@ const Header = () => {
     try {
       const response = await signOut();
       if (response.code === 200) {
-        console.log("로그아웃 완료", response);
         logout();
       } else {
         console.error("로그아웃 실패", response);
