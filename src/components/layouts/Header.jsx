@@ -32,10 +32,12 @@ const Header = () => {
   const openSearchModal = () => {
     setIsModalOpen(true);
     setSearchText("");
+    console.log("모달 창 열기");
   };
 
   const closeSearchModal = () => {
     setIsModalOpen(false);
+    console.log("모달 창 닫기");
   };
 
   const fetchSearchResults = useCallback(async (keyword) => {
