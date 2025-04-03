@@ -1,8 +1,9 @@
-import noAuthApi from "@/api/noAuthApi";
+import authApi from "@/api/authApi";
 
-const socialSignIn = async (platform, code) => {
+const deleteReservation = async ({ tradeReservationId }) => {
   try {
-    const response = await noAuthApi.post(`auth/sign-in/${platform}`, { code });
+    const response = await authApi.delete(`stocks/${tradeReservationId}`);
+
     return response.data;
   } catch (error) {
     console.error("API 요청 중 오류 발생", error);
@@ -19,4 +20,4 @@ const socialSignIn = async (platform, code) => {
   }
 };
 
-export default socialSignIn;
+export default deleteReservation;

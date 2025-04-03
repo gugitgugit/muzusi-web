@@ -75,6 +75,7 @@ const Header = () => {
   };
 
   const handleClickSearchedStock = (stock) => () => {
+    setIsModalOpen(false);
     navigate(`stocks/${stock.stockCode}`, { state: { stock } });
   };
 
@@ -104,7 +105,7 @@ const Header = () => {
             </GNBBtn>
             <GNBBtn>
               <GNBAnchor
-                href="/account"
+                href="/account/asset"
                 $isActive={currentPath.startsWith("/account")}
               >
                 내 계좌
@@ -188,7 +189,7 @@ const GlobalNavBar = styled.div`
   height: 60px;
   position: sticky;
   width: 100%;
-  z-index: 10001;
+  z-index: 99;
   max-width: 1280px;
   margin: auto;
 `;

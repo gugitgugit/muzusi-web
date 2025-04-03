@@ -1,42 +1,22 @@
-import getStocksRank from "@/api/stocks/getStocksRank";
-import { useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-const Rank = () => {
-  const [rank, setRank] = useState([]);
-  const [type, setType] = useState("VOLUME");
-  const [time, setTime] = useState("");
-  const [page, setPage] = useState(0);
-
-  const types = [
-    { value: "VOLUME", korean: "거래량" },
-    { value: "RISING", korean: "급상승" },
-    { value: "FALLING", korean: "급하락" },
-  ];
-
-  const fetchRank = useCallback(async () => {
-    try {
-      const response = await getStocksRank({
-        type: type,
-      });
-      setRank(response.data.rank);
-      setTime(response.data.time);
-    } catch (error) {
-      console.error("주식 순위 가져오기 실패: ", error.message);
-    }
-  }, [type]);
-
-  useEffect(() => {
-    fetchRank();
-  }, [fetchRank]);
+const Rank = ({ rank, rankPage, type, types, time, setRankPage, setType }) => {
+  const navigate = useNavigate();
 
   const handleType = (type) => () => {
     setType(type);
-    setPage(0);
+    setRankPage(0);
   };
 
   const handlePage = (pageNumber) => () => {
-    setPage(pageNumber - 1);
+    setRankPage(pageNumber - 1);
+  };
+
+  const handleClickStock = (el) => () => {
+    const stock = { stockName: el.name, stockCode: el.code };
+    navigate(`stocks/${stock.stockCode}`, { state: { stock } });
   };
 
   return (
@@ -72,14 +52,18 @@ const Rank = () => {
           </RankTheadTr>
         </RankThead>
         <RankTableContent>
-          {rank.slice(page * 10, page * 10 + 10).map((el) => {
+          {rank.slice(rankPage * 10, rankPage * 10 + 10).map((el) => {
             const formattedPrice = el.price.toLocaleString();
             const formattedPrdyVrss = el.prdyVrss.toLocaleString();
             const adjustedPrdyCtrt =
               el.prdyCtrt < 0 ? Math.abs(el.prdyCtrt) : el.prdyCtrt;
             const formattedAvrgVol = el.avrgVol.toLocaleString();
             return (
-              <RankTableStock key={el.rank} $isOdd={el.rank % 2 !== 0}>
+              <RankTableStock
+                key={el.rank}
+                onClick={handleClickStock(el)}
+                $isOdd={el.rank % 2 !== 0}
+              >
                 <StockRanking>{el.rank}</StockRanking>
                 <StockName>{el.name}</StockName>
                 <StockPrice>{formattedPrice}원</StockPrice>
@@ -98,7 +82,7 @@ const Rank = () => {
             <PageBtn
               key={index}
               onClick={handlePage(index + 1)}
-              $isActive={page === index}
+              $isActive={rankPage === index}
             >
               {index + 1}
             </PageBtn>
@@ -107,6 +91,16 @@ const Rank = () => {
       </RankTablePageController>
     </RankContainer>
   );
+};
+
+Rank.propTypes = {
+  rank: PropTypes.array.isRequired,
+  rankPage: PropTypes.number.isRequired,
+  type: PropTypes.string.isRequired,
+  types: PropTypes.array.isRequired,
+  time: PropTypes.string.isRequired,
+  setRankPage: PropTypes.func.isRequired,
+  setType: PropTypes.func.isRequired,
 };
 
 export default Rank;

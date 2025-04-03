@@ -5,11 +5,14 @@ import SignIn from "@/pages/SignIn";
 import Stocks from "@/pages/Stocks";
 import Home from "@/pages/Home";
 import Asset from "@/pages/Asset";
+import Records from "@/pages/Records";
+import AddressError from "@/pages/AddressError";
 import Transactions from "@/pages/Transactions";
 import GlobalStyles from "@/GlobalStyles";
 import KakaoRedirect from "@/components/auth/KakaoRedirect";
 import NaverRedirect from "@/components/auth/NaverRedirect";
 import SignUp from "@/pages/SignUp";
+import AccountLayout from "@/components/layouts/AccountLayout";
 import useAuth from "@/contexts/useAuth";
 import { setUpInterceptors } from "@/api/authApi";
 
@@ -42,13 +45,13 @@ const App = () => {
             {/* 기본 경로 */}
             <Route index element={<Home />} />
             <Route path="stocks/:stockcode" element={<Stocks />} />
+            <Route path="*" element={<AddressError />} />
 
             {/* 내 계좌 경로 */}
-            <Route path="account">
-              {/* 기본 경로 or asset */}
-              <Route index element={<Asset />} />
+            <Route path="account" element={<AccountLayout />}>
               <Route path="asset" element={<Asset />} />
               <Route path="transactions" element={<Transactions />} />
+              <Route path="records" element={<Records />} />
             </Route>
           </Route>
         </Routes>

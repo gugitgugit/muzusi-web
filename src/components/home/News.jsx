@@ -1,53 +1,18 @@
-import getNews from "@/api/news/getNews";
-import getNewsByKeyword from "@/api/news/getNewsByKeyword";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import styled, { css, keyframes } from "styled-components";
+import PropTypes from "prop-types";
 
-const News = () => {
-  const [news, setNews] = useState([]);
-  const [page, setPage] = useState(0);
+const News = ({
+  news,
+  newsPage,
+  keyword,
+  keywords,
+  setNewsPage,
+  setKeyword,
+  isNewsLoading,
+}) => {
   const [animatingOut, setAnimatingOut] = useState(false);
   const [animatingIn, setAnimatingIn] = useState(false);
-  const [keyword, setKeyword] = useState("전체");
-
-  const keywords = ["전체", "코스닥", "코스피"];
-
-  const fetchNews = useCallback(async () => {
-    try {
-      const response = await getNews({
-        page: 0,
-        size: 50,
-        sort: "pubDate,desc",
-      });
-      setPage(0);
-      setNews(response.data.content);
-    } catch (error) {
-      console.error("주요 뉴스 가져오기 실패: ", error.message);
-    }
-  }, []);
-
-  const fetchNewsByKeyword = useCallback(async () => {
-    try {
-      const response = await getNewsByKeyword({
-        page: 0,
-        size: 50,
-        sort: "pubDate,desc",
-        keyword: keyword,
-      });
-      setPage(0);
-      setNews(response.data.content);
-    } catch (error) {
-      console.error("키워드 뉴스 가져오기 실패: ", error.message);
-    }
-  }, [keyword]);
-
-  useEffect(() => {
-    if (keyword === "전체") {
-      fetchNews();
-    } else {
-      fetchNewsByKeyword();
-    }
-  }, [fetchNews, fetchNewsByKeyword, keyword]);
 
   const decodeHtmlEntities = (text) => {
     const parser = new DOMParser();
@@ -85,7 +50,7 @@ const News = () => {
     setAnimatingOut(true);
 
     setTimeout(() => {
-      setPage((prevPage) => (prevPage < 4 ? prevPage + 1 : 0));
+      setNewsPage((prevPage) => (prevPage < 4 ? prevPage + 1 : 0));
       setAnimatingOut(false);
       setAnimatingIn(true);
 
@@ -116,40 +81,56 @@ const News = () => {
         </NewsTitleContainer>
         <PageIndicators>
           {Array.from({ length: 5 }).map((_, index) => (
-            <PageIndicator key={index} $isActive={index === page} />
+            <PageIndicator key={index} $isActive={index === newsPage} />
           ))}
         </PageIndicators>
       </NewsHeader>
-      <NewsContents>
-        <NewsTransitionContainer
-          $animatingOut={animatingOut}
-          $animatingIn={animatingIn}
-        >
-          <NewsColumn>
-            {news.slice(page * 10, page * 10 + 5).map((el, index) => {
-              return (
-                <NewsContent key={index} href={el.link}>
-                  <NewsTitle>{decodeHtmlEntities(el.title)}</NewsTitle>
-                  <NewsPubDate>{getRelativeTime(el.pubDate)}</NewsPubDate>
-                </NewsContent>
-              );
-            })}
-          </NewsColumn>
-          <NewsColumn>
-            {news.slice(page * 10 + 5, page * 10 + 10).map((el, index) => {
-              return (
-                <NewsContent key={index} href={el.link}>
-                  <NewsTitle>{decodeHtmlEntities(el.title)}</NewsTitle>
-                  <NewsPubDate>{getRelativeTime(el.pubDate)}</NewsPubDate>
-                </NewsContent>
-              );
-            })}
-          </NewsColumn>
-        </NewsTransitionContainer>
-        <MoreNewsBtn onClick={handleNextPage}>&gt;</MoreNewsBtn>
-      </NewsContents>
+      {isNewsLoading ? (
+        <NewsLoading>뉴스를 불러오는 중입니다.</NewsLoading>
+      ) : (
+        <NewsContents>
+          <NewsTransitionContainer
+            $animatingOut={animatingOut}
+            $animatingIn={animatingIn}
+          >
+            <NewsColumn>
+              {news.slice(newsPage * 10, newsPage * 10 + 5).map((el, index) => {
+                return (
+                  <NewsContent key={index} href={el.link}>
+                    <NewsTitle>{decodeHtmlEntities(el.title)}</NewsTitle>
+                    <NewsPubDate>{getRelativeTime(el.pubDate)}</NewsPubDate>
+                  </NewsContent>
+                );
+              })}
+            </NewsColumn>
+            <NewsColumn>
+              {news
+                .slice(newsPage * 10 + 5, newsPage * 10 + 10)
+                .map((el, index) => {
+                  return (
+                    <NewsContent key={index} href={el.link}>
+                      <NewsTitle>{decodeHtmlEntities(el.title)}</NewsTitle>
+                      <NewsPubDate>{getRelativeTime(el.pubDate)}</NewsPubDate>
+                    </NewsContent>
+                  );
+                })}
+            </NewsColumn>
+          </NewsTransitionContainer>
+          <MoreNewsBtn onClick={handleNextPage}>&gt;</MoreNewsBtn>
+        </NewsContents>
+      )}
     </NewsContainer>
   );
+};
+
+News.propTypes = {
+  news: PropTypes.array.isRequired,
+  newsPage: PropTypes.number.isRequired,
+  keyword: PropTypes.string.isRequired,
+  keywords: PropTypes.array.isRequired,
+  setNewsPage: PropTypes.func.isRequired,
+  setKeyword: PropTypes.func.isRequired,
+  isNewsLoading: PropTypes.bool.isRequired,
 };
 
 export default News;
@@ -320,4 +301,14 @@ const MoreNewsBtn = styled.a`
     font-weight: 700;
     color: #333d4b;
   }
+`;
+
+const NewsLoading = styled.div`
+  display: flex;
+  width: 100%;
+  margin-top: 50px;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
 `;
